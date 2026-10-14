@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/init/env python3
 """
 enem_erros.py - % de erro por questão do ENEM (prova AZUL, aplicação regular).
 
@@ -29,7 +29,7 @@ BRANCO, DUPLA = ord("."), ord("*")
 # Carrega e limpa o arquivo de metadados das questões (ITENS_PROVA)
 # Filtra as colunas obrigatórias, remove espaços em branco dos textos,
 # converte a posição da questão para inteiro e trata os parâmetros 
-# do TRI trocando a vírgula por ponto.
+# do TRI trocando a vírgula por ponto
 def ler_itens(caminho):
     df = pd.read_csv(caminho, sep=";", encoding=ENC, dtype=str)
     df.columns = df.columns.str.strip()
@@ -61,7 +61,7 @@ def lingua_do_item(valor):
 
 # Filtra as questões da prova de cor AZUL e monta gabaritos de referência
 # Cria uma matriz indexada por [idioma, posição da questão] contendo o código ASCII 
-# da alternativa correta (A, B, C, D, E), ignorando provas incompletas.
+# da alternativa correta (A, B, C, D, E), ignorando provas incompletas
 def montar_chaves(itens):
     """(área, prova) -> gabarito por língua e posição inicial. Só provas de cor AZUL."""
     chaves = {}
@@ -101,7 +101,7 @@ def conferir(area, prova, chave0, gab_participante):
 
 # Processa os microdados de resultados em blocos -> economizar memória
 # Para cada participante, extrai a string de respostas e valida o tamanho
-# Usa operações vetorizadas do NumPy para contar: o total de respondentes (n), a soma de acertos e a soma de respostas em branco/duplas.
+# Usa operações vetorizadas do NumPy para contar: o total de respondentes (n), a soma de acertos e a soma de respostas em branco/duplas
 def processar(itens, caminho_resultados):
     chaves = montar_chaves(itens)
     if not chaves:
@@ -158,7 +158,7 @@ def processar(itens, caminho_resultados):
 
 # Identifica a prova azul regular (com maior volume de participantes) por área
 # Com isso, calcula estatísticas detalhadas por questão: percentual de acerto, percentual de erro, 
-# marcações em branco e indica se a questão foi anulada, gerando um DataFrame em ordem cronológica.
+# marcações em branco e indica se a questão foi anulada, gerando um DataFrame em ordem cronológica
 def montar_saida(ano, itens, chaves, acc):
     print("\nProvas AZUL encontradas (participantes presentes):")
     escolhidas = {}
@@ -200,17 +200,29 @@ def montar_saida(ano, itens, chaves, acc):
 
 
 # Concatena os arquivos CSV individuais de cada ano em uma única tabela com o histórico compilado
-# Gera um arquivo unificado ('todos_os_anos.csv') e extrai um ranking das 
-# 100 questões válidas (não anuladas) que apresentaram a maior taxa de erro.
+# Gera um arquivo unificado ('todos_os_anos.csv') e extrai um ranking amplo 
+# das questões válidas (não anuladas) que apresentaram índice de erro >= 75%.
 def juntar(saida):
     arqs = sorted(glob.glob(os.path.join(saida, "erros_20*.csv")))
     if not arqs:
         sys.exit(f"Nenhum erros_AAAA.csv em {saida}/")
     df = pd.concat((pd.read_csv(a) for a in arqs), ignore_index=True)
     df.to_csv(os.path.join(saida, "todos_os_anos.csv"), index=False)
-    top = df[df["anulado"] == 0].sort_values("pct_erro", ascending=False).head(100)
-    top.to_csv(os.path.join(saida, "top100_mais_erradas.csv"), index=False)
-    print(f"{len(arqs)} anos juntados, {len(df):,} questões. Arquivos em {saida}/")
+    
+    # ALTERAÇÃO: ABRANGÊNCIA AMPLIADA PARA QUESTÕES COM 75% OU MAIS DE ERROS
+    limiar_erro = 75.0
+    
+    # Filtra questões não anuladas com percentual de erro maior ou igual a 75%
+    questoes_altos_erros = df[
+        (df["anulado"] == 0) & (df["pct_erro"] >= limiar_erro)
+    ].sort_values("pct_erro", ascending=False)
+    
+    # Salva o arquivo unificado abrangendo todas as questões com 75%+ de erro
+    questoes_altos_erros.to_csv(os.path.join(saida, "questoes_erro_acima_75pct.csv"), index=False)
+    
+    print(f"{len(arqs)} anos juntados, {len(df):,} questões totais processadas.")
+    print(f"Filtro aplicado: {len(questoes_altos_erros)} questões encontradas com taxa de erro >= {limiar_erro}%.")
+    print(f"Resultados salvos em '{saida}/questoes_erro_acima_75pct.csv'.")
 
 
 def main():
@@ -232,11 +244,29 @@ def main():
     itens = ler_itens(args.itens)
     chaves, acc = processar(itens, args.resultados)
     df = montar_saida(args.ano, itens, chaves, acc)
+    
+    # Salva o arquivo geral com todas as questões do ano analisado
     destino = os.path.join(args.saida, f"erros_{args.ano}.csv")
     df.to_csv(destino, index=False)
-    print(f"\nSalvo em {destino} ({len(df)} linhas). As 10 questões com mais erros:")
+    
+    # ALTERAÇÃO NO MAIN: REMOÇÃO DO .head(10) E APLICAÇÃO DO FILTRAGEM >= 75%
+    # Agora o script não se limita mais apenas às 10 piores questões. Ele filtra 
+    # todas as questões daquele ano com taxa de erro >= 75% e salva um arquivo 
+    # específico para o ano com esses dados
+    limiar_erro = 75.0
+    df_altos_erros = df[(df["anulado"] == 0) & (df["pct_erro"] >= limiar_erro)].sort_values("pct_erro", ascending=False)
+    
+    destino_altos_erros = os.path.join(args.saida, f"questoes_erro_acima_75pct_{args.ano}.csv")
+    df_altos_erros.to_csv(destino_altos_erros, index=False)
+    
+    print(f"\nSalvo em {destino} (todas as questões) e em {destino_altos_erros} ({len(df_altos_erros)} questões com erro >= {limiar_erro}%).")
+    
     cols = ["area", "posicao", "habilidade", "pct_erro", "dificuldade_tri"]
-    print(df[df["anulado"] == 0].sort_values("pct_erro", ascending=False).head(10)[cols].to_string(index=False))
+    if not df_altos_erros.empty:
+        print(f"\nQuestões com índice de erro >= {limiar_erro}% ({len(df_altos_erros)} encontradas):")
+        print(df_altos_erros[cols].to_string(index=False))
+    else:
+        print(f"\nNenhuma questão atingiu o índice de erro de {limiar_erro}% nesta prova.")
 
 
 if __name__ == "__main__":
