@@ -10,10 +10,15 @@ Apesar de todas as edições do ENEM estarem aptas a serem analisadas por esse c
 ### Principais funcionalidades
 
 - **Filtragem automática** da prova azul para cada área de conhecimento (Linguagens e Códigos, Ciências Humanas, Ciências da Natureza e Matemática).
+
 - Tratamento adequado para a divisão de língua estrangeira (inglês e espanhol) na prova de Linguagens.
+
 - **Cálculo da porcentagem** de acertos, erros e marcações em branco ou dupla marcação por item.
+
 - Extração de parâmetros da **TRI** (*Teoria de Resposta ao Item*), como dificuldade e discriminação, quando disponíveis.
-- Consolidação de múltiplos anos em uma única tabela e geração automática de um ranking com as questões mais difíceis.
+
+- Consolidação de múltiplos anos em uma única tabela e geração automática de relatórios abrangentes filtrando questões com alto índice de erro (taxa $\ge$ 75% ).
+
 
 ## Requisitos
 
@@ -68,7 +73,9 @@ Provas AZUL encontradas (participantes presentes):
   MT  prova 1323:          0
 Usando a prova com mais participantes em cada área (a regular): {'LC': '1395', 'CH': '1383', 'CN': '1419', 'MT': '1407'}
 
-Salvo em saida\erros_2024.csv (185 linhas). As 10 questões com mais erros:
+Salvo em saida\erros_2024.csv (todas as questões) e em saida\questoes_erro_acima_75pct_2024.csv (39 questões com erro >= 75.0%).
+
+Questões com índice de erro >= 75.0% (39 encontradas):
 area  posicao habilidade  pct_erro  dificuldade_tri
   CN       95         11     92.40          2.03104
   CN      115         15     89.15          2.15318
@@ -80,6 +87,35 @@ area  posicao habilidade  pct_erro  dificuldade_tri
   MT      136         13     84.08          2.55251
   CH       82          1     83.94          2.16372
   CN       98         16     83.79          1.77477
+  MT      171         22     83.49          2.87200
+  LC       22         22     83.28          1.81798
+  CN      125         22     82.47          1.04132
+  MT      162          5     81.50          2.60757
+  MT      146         22     81.46          3.09917
+  MT      166         19     81.26          1.73585
+  CN      102          2     81.07          1.29429
+  MT      175         12     81.01          1.93864
+  MT      169         28     80.69          2.72688
+  CN      135         26     80.61          1.22062
+  CN       97         25     79.82          1.94764
+  MT      149         14     79.62          2.03277
+  MT      155          9     78.95          2.23749
+  MT      163         12     78.40          2.29841
+  MT      174          6     78.16          1.63004
+  MT      142          2     78.05          1.61749
+  CH       89          7     77.80          1.69903
+  CN      111         14     77.49          0.99510
+  MT      143         18     76.93          2.91962
+  LC       21         14     76.57          1.35497
+  CH       49         16     76.55          1.26456
+  CN      119         20     76.32          1.84281
+  LC       31         15     76.24          2.06747
+  CN      130          8     76.20          1.28849
+  MT      141         20     75.96          2.01893
+  CH       73          5     75.81          2.71266
+  MT      165         30     75.79          2.86851
+  MT      150         13     75.58          3.36222
+  CN      104         12     75.46          2.41049
 ```
 ---
 ### Declaração de Uso de IA
