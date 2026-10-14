@@ -218,3 +218,7 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Dados e pastas locais do projeto ENEM
+saida/
+*.csv
