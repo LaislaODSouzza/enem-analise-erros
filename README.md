@@ -56,7 +56,7 @@ ENEM 2024
   conferência MT/1363: OK, gabarito bate com o do participante
   conferência MT/1407: OK, gabarito bate com o do participante
   4,332,944 linhas lidas...
-  total: 4,332,944 linhas; 0 respostas descartadas por tamanho != 45
+  total: 4,332,944 linhas; 0 respostas descartadas por tamanho inesperado
 
 Provas AZUL encontradas (participantes presentes):
   LC  prova 1395:    788,173
@@ -73,9 +73,10 @@ Provas AZUL encontradas (participantes presentes):
   MT  prova 1323:          0
 Usando a prova com mais participantes em cada área (a regular): {'LC': '1395', 'CH': '1383', 'CN': '1419', 'MT': '1407'}
 
-Salvo em saida\erros_2024.csv (todas as questões) e em saida\questoes_erro_acima_75pct_2024.csv (39 questões com erro >= 75.0%).
+Salvo em saida\erros_2024.csv (todas as questões) e em saida\questoes_erro_acima_75pct_2024.csv (39 questões com erro >= 75%).
+Por área: {'CH': 5, 'CN': 13, 'LC': 3, 'MT': 18}
 
-Questões com índice de erro >= 75.0% (39 encontradas):
+Questões com índice de erro >= 75% (39 encontradas):
 area  posicao habilidade  pct_erro  dificuldade_tri
   CN       95         11     92.40          2.03104
   CN      115         15     89.15          2.15318
